@@ -27,15 +27,21 @@ const Generator = () => {
     setShowModal(!showModal);
   }
 
-  function updateMuscles(muscleGroup: string[]) {
-    if (muscles.length > 2) {
-      return;
-    }
-    if (poison !== "individual") {
-      // Fix the string comparison
-      setMuscles([...muscles, ...muscleGroup]); // Update the state correctly
-    }
-  }
+ function updateMuscles(muscleGroup: string[]) {
+   if (muscles.length > 3) {
+     return;
+   }
+   if (poison !== "individual") {
+     setMuscles([...muscles, ...muscleGroup]); // Spread the muscleGroup array
+     setShowModal(false)
+   } else if (muscles.some((m) => muscleGroup.includes(m))) {
+     // Use some to check if any muscleGroup elements are already in muscles
+     setMuscles(muscles.filter((val) => !muscleGroup.includes(val))); // Remove muscleGroup elements from muscles
+   } else {
+     setMuscles([...muscles, ...muscleGroup]); // Spread the muscleGroup array
+   }
+ }
+
 
   return (
     <SectionWrapper
@@ -86,8 +92,13 @@ const Generator = () => {
             ).map((muscleGroup: any, muscleGroupIndex: any) => {
               return (
                 <button
-                  onClick={() => {}}
-                  className="hover:text-blue-400 duration-200"
+                  onClick={() => {
+                    updateMuscles(muscleGroup)
+                  }}
+                  className={
+                    "hover:text-blue-400 duration-200" +
+                    (muscles.includes(muscleGroup) ? "text-blue-400 " : "")
+                  }
                   key={muscleGroupIndex}
                 >
                   <p className="uppercase">{muscleGroup}</p>
